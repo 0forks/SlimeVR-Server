@@ -179,9 +179,6 @@ export function useProvideWebsocketApi(): WebSocketApi {
   };
 
   const reconnect = () => {
-    if (webSocketRef.current && isConnected) {
-      webSocketRef.current.close();
-    }
     disconnect();
     connect();
   };
