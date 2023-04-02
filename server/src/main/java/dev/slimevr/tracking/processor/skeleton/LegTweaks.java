@@ -201,18 +201,12 @@ public class LegTweaks {
 
 	public void setFloorclipEnabled(boolean floorclipEnabled) {
 		this.floorclipEnabled = floorclipEnabled;
-
-		// reset the buffer
-		this.bufferHead = new LegTweakBuffer();
-		this.bufferInvalid = true;
+		this.resetBuffer();
 	}
 
 	public void setSkatingReductionEnabled(boolean skatingCorrectionEnabled) {
 		this.skatingCorrectionEnabled = skatingCorrectionEnabled;
-
-		// reset the buffer
-		this.bufferHead = new LegTweakBuffer();
-		this.bufferInvalid = true;
+		this.resetBuffer();
 	}
 
 	public void setToeSnapEnabled(boolean val) {
@@ -244,7 +238,8 @@ public class LegTweaks {
 	}
 
 	public void resetBuffer() {
-		bufferInvalid = true;
+		this.bufferHead = new LegTweakBuffer();
+		this.bufferInvalid = true;
 	}
 
 	public void setConfig(LegTweaksConfig config) {
