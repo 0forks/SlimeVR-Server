@@ -118,6 +118,8 @@ public class LegTweaks {
 	private LegTweakBuffer bufferHead = new LegTweakBuffer();
 	private boolean bufferInvalid = true;
 
+	private long timeSinceLastTickNs = 0;
+
 	public LegTweaks(HumanSkeleton skeleton) {
 		this.skeleton = skeleton;
 	}
@@ -416,9 +418,13 @@ public class LegTweaks {
 		}
 
 		// update the buffer head and compute the current state of the legs
-		currentFrame.setParent(bufferHead);
-		this.bufferHead = currentFrame;
-		this.bufferHead.calculateFootAttributes(active);
+		long now = System.nanoTime();
+		if (timeSinceLastTickNs == 0 || (now - timeSinceLastTickNs) > 4e6) {
+			currentFrame.setParent(bufferHead);
+			this.bufferHead = currentFrame;
+			this.bufferHead.calculateFootAttributes(active);
+			timeSinceLastTickNs = now;
+		}
 
 		// update the lock duration counters
 		updateLockStateCounters();
@@ -589,6 +595,9 @@ public class LegTweaks {
 	}
 
 	private void correctUnlockedLeftFootTracker() {
+		if (bufferHead == null || bufferHead.getParent() == null)
+			return;
+
 		if (bufferHead.getLeftLegState() == LegTweakBuffer.UNLOCKED) {
 			Vector3f leftFootDif = leftFootPosition
 				.subtract(bufferHead.getParent().getLeftFootPositionCorrected(null))
@@ -673,6 +682,9 @@ public class LegTweaks {
 	}
 
 	private void correctUnlockedRightFootTracker() {
+		if (bufferHead == null || bufferHead.getParent() == null)
+			return;
+
 		if (bufferHead.getRightLegState() == LegTweakBuffer.UNLOCKED) {
 			Vector3f rightFootDif = rightFootPosition
 				.subtract(bufferHead.getParent().getRightFootPositionCorrected(null))
